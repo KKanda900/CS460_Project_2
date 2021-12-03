@@ -80,16 +80,11 @@ if __name__ == "__main__":
     
     kf = Kalman_Filter(F, H, Q, R, u)
     
+    predictions = []
+    
     for z_pt in z:
         z_pt = np.array(list(z_pt))
         pred = kf.predict()
-        print(np.dot(H, pred[0])[0])
+        pred = np.dot(H, pred[0])[0]
+        predictions.append(pred)
         kf.update(z_pt)
-        #kf.predict()
-        
-    
-    ''' def update():
-        S = R + H*(H*z*H.T)
-        K = (z*H.T)*inv(S)
-        x = x + (K*(z-H*x))
-        pred = I - (K*H)*z '''
