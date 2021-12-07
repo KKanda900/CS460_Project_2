@@ -21,7 +21,7 @@ robot = [[10, 10], [20, 20], [15.0, 5]]
 
 N = 0
 landmarks = []
-line_counter = 0
+line_counter = 0 
 
 with open(sys.argv[1]) as f:
     for line in f:
