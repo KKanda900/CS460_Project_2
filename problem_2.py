@@ -2,6 +2,15 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 
+'''
+
+Things to Fix Before Submission:
+
+    1. Generate Graphs
+    2. Logic based on how they want to do it
+
+'''
+
 def generate_point():
     return float(random.uniform(-5,5))
 

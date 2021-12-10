@@ -3,18 +3,37 @@ import numpy as np
 from numpy.lib.function_base import insert
 import matplotlib.pyplot as plt
 
-def predict(A, B, Q, u_t, mu_t, Sigma_t):
-    predicted_mu = A @ mu_t + B @ u_t
-    predicted_Sigma = A @ Sigma_t @ A.T + Q
-    return predicted_mu, predicted_Sigma
+'''
 
-def update(H, R, z, predicted_mu, predicted_Sigma):
-    residual_mean = z - H @ predicted_mu
-    residual_covariance = H @ predicted_Sigma @ H.T + R
-    kalman_gain = predicted_Sigma @ H.T @ np.linalg.inv(residual_covariance)
-    updated_mu = predicted_mu + kalman_gain @ residual_mean
-    updated_Sigma = predicted_Sigma - kalman_gain @ H @ predicted_Sigma
-    return updated_mu, updated_Sigma
+Things to Fix Before Submission:
+
+    1. Simplify the predict and update equations
+    2. Clean up logic in the main method
+    
+'''
+
+'''
+Class Definition for Kalman Filter
+
+class Kalman_Filter:
+    
+    Q = R = u = A = B = H = x_k = p_k = None
+    
+    def __init__(self, Q, R, u):
+        pass
+
+'''
+
+def predict(A, B, Q, u_t, x_k_1, p_k_1):
+    x_k = A @ x_k_1 + B @ u_t
+    p_k = A @ p_k_1 @ A.T + Q
+    return x_k, p_k
+
+def update(H, R, z, x_k, p_k):
+    K = p_k @ H.T @ np.linalg.inv(H @ p_k @ H.T + R)
+    x_k = p_k + K @ (z - H @ x_k)
+    p_k = p_k - K @ H @ p_k
+    return x_k, p_k
 
 if __name__ == "__main__":
     
@@ -38,8 +57,6 @@ if __name__ == "__main__":
     ''' Kalman Filter Logic '''
         
     # Initialize constants
-    Q = [[0.0001, 0.00002], [0.00002, 0.0001]]
-    R = [[0.01, 0.005], [0.005, 0.02]]
     
     # separate the data
     k = [] # k values
@@ -49,51 +66,37 @@ if __name__ == "__main__":
     
     for i in range(0, len(data)):
         k.append(i+1)
-        #u.append((float(data[i][0]), float(data[i][1])))
         u1_k_1.append(float(data[i][0]))
         u2_k_1.append(float(data[i][1]))
         z.append((float(data[i][2]), float(data[i][3])))
+    
+    Q = [[0.0001, 0.00002], [0.00002, 0.0001]]
+    R = [[0.01, 0.005], [0.005, 0.02]]
+    
+    u = list(np.stack((u1_k_1,u2_k_1), axis=1))
 
-    ground_truth_states = np.stack((u1_k_1,u2_k_1), axis=1)
-    u = list(ground_truth_states.copy())
+    u_t = np.array(u.pop(0))
+    A = np.array([[1, 0], [0, 1]])
+    B = np.array([[1, 0], [0, 1]])
+    H = np.array([[1, 0], [0, 1]])
 
-    # Re-initialize the problem with the given information
-    mu_0 = np.array([0, 0])
-    Sigma_0 = np.array([[0.1, 0],
-                        [0, 0.1]])
-    u_t = np.array([1, 1]) # we assume constant control input
+    x_k = np.array([0, 0]) 
+    p_k = np.array([[0.1, 0], [0, 0.1]]) 
 
-    A = np.array([[1, 0],
-                [0, 1]])
-    B = np.array([[1, 0],
-                [0, 1]])
-    """ Q = np.array([[0.3, 0],
-                [0, 0.3]]) """
-    H = np.array([[1, 0],
-                [0, 1]])
-    """ R = np.array([[0.75, 0],
-                [0, 0.6]]) """
+    pred = []
 
-    mu_current = mu_0.copy()
-    Sigma_current = Sigma_0.copy()
-
-    pred_x = []
-    pred_y = []
-
-    for k in range(len(k)-1):
+    for k_iter in range(len(k)-1):
         '''
         Steps:
             1. Predict 
             2. Update
         '''
-        if len(u) != 0:
+        if k_iter > 0 and len(u) != 0:
             u_t = u.pop(0)
 
-        predicted_mu, predicted_Sigma = predict(A, B, Q, u_t, mu_current, Sigma_current)
-        pred_x.append(predicted_mu)
-        pred_y.append(predicted_Sigma)
+        x_pred, p_pre = predict(A, B, Q, u_t, x_k, p_k)
+        pred.append(x_pred)
         new_measurement = z.pop(0)
-        mu_current, Sigma_current = update(H, R, new_measurement, predicted_mu, predicted_Sigma)
+        x_k, p_k = update(H, R, new_measurement, x_pred, p_pre)
 
-    print(pred_x)
-    print(pred_y)
+    print(pred)
