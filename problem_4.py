@@ -17,21 +17,21 @@ def visualize_problem(robot, landmarks):
 
     plt.show()
     
-robot = [[10, 10], [20, 20], [15.0, 5]]
+    robot = [[10, 10], [20, 20], [15.0, 5]]
 
-N = 0
-landmarks = []
-line_counter = 0 
+    N = 0
+    landmarks = []
+    line_counter = 0 
 
-with open(sys.argv[1]) as f:
-    for line in f:
-        if line_counter == 0:
-            N = int(line)
-        else:
-            line_arr = line.split(' ')
-            x = line_arr[0].replace('\n', '')
-            y = line_arr[1].replace('\n', '')
-            landmarks.append((float(x), float(y)))
-        line_counter += 1
-        
-visualize_problem(robot, landmarks)
+    with open(sys.argv[1]) as f:
+        for line in f:
+            if line_counter == 0:
+                N = int(line)
+            else:
+                line_arr = line.split(' ')
+                x = line_arr[0].replace('\n', '')
+                y = line_arr[1].replace('\n', '')
+                landmarks.append((float(x), float(y)))
+            line_counter += 1
+            
+    visualize_problem(robot, landmarks)
