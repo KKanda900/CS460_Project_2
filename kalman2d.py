@@ -112,38 +112,33 @@ if __name__ == "__main__":
     p_k = np.array([[0.1, 0], [0, 0.1]])
     
     for k_iter in range(kf.iterations-1):
-        #print('\n')
         x_pred, p_pre = kf.predict(A, B, kf.Q, kf.u.pop(0), x_k, p_k)
-        print(x_pred)
-        time.sleep(10)
-        kf.pred.append(x_pred)
-        #print(x_pred)
-        #print(p_pre)
-        #time.sleep(10)
-        #print('\n')
         new_measurement = kf.z.pop(0)
         x_k, p_k = kf.update(kf.H, kf.R, new_measurement, x_pred, p_pre)
-        #print(x_k)
-        #print(p_k)
-        #time.sleep(10)
+        kf.pred.append(x_k)
 
     predictions = kf.pred
 
-    x = []
-    y = []
+    #print(predictions)
     
-    for prediction in predictions:
-        x_ = prediction[0]
-        y_ =  prediction[1]
-        x.append(x_)
-        y.append(y_)
+    #print(predictions[0][0])
+
+    x = y = []
+
+    print(predictions)
+
+    for i in range(len(predictions)):
+        x_, y_ = 0, 0
+        for j in range(len(predictions[i])):
+            x_ += predictions[i][j][0]
+            y_ += predictions[i][j][1]
         
-    print(x,'\n', y)
-    
-    z_x = []
-    z_y = []
-    
+        x.append(x_/2)
+        y.append(y_/2)
+
+    print(x, '\n', y)
+
     plt.plot(x, y) 
-    #plt.plot(z_xk, z_yk)
+    plt.plot(z_xk, z_yk)
     
     plt.show()
