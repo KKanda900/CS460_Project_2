@@ -5,15 +5,6 @@ import matplotlib.pyplot as plt
 import time
 
 '''
-
-Things to Fix Before Submission:
-
-    1. Simplify the predict and update equations
-    2. Clean up logic in the main method
-    
-'''
-
-'''
 Class Definition for Kalman Filter
 
 class Kalman_Filter:
